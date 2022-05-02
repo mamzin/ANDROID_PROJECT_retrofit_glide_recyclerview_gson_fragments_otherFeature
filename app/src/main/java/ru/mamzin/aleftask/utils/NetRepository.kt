@@ -1,4 +1,4 @@
-package ru.mamzin.aleftask
+package ru.mamzin.aleftask.utils
 
 import ru.mamzin.aleftask.net.RetrofitService
 

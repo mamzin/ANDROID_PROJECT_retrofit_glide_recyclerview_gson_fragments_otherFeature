@@ -7,7 +7,9 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import ru.mamzin.aleftask.R
+import ru.mamzin.aleftask.utils.GlideApp
 
 class DataAdapter(
     private var dataList: List<String>,
@@ -28,8 +30,9 @@ class DataAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        Glide.with(context)
+        GlideApp.with(context)
             .load(dataList[position])
+            .diskCacheStrategy(DiskCacheStrategy.ALL)
             .override(270, 270)
             .centerCrop()
             .error(R.drawable.glide_err_foreground)

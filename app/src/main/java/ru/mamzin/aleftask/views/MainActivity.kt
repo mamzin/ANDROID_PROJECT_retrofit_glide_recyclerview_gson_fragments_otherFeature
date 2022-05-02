@@ -11,7 +11,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import ru.mamzin.aleftask.NetRepository
+import ru.mamzin.aleftask.utils.NetRepository
 import ru.mamzin.aleftask.R
 import ru.mamzin.aleftask.model.DataAdapter
 import ru.mamzin.aleftask.net.RetrofitService

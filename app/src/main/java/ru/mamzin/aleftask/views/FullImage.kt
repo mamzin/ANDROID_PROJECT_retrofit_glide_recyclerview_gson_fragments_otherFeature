@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.widget.ImageView
 import com.bumptech.glide.Glide
 import ru.mamzin.aleftask.R
+import ru.mamzin.aleftask.utils.GlideApp
 
 class FullImage : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -15,9 +16,10 @@ class FullImage : AppCompatActivity() {
         var link = intent.getStringExtra("IMG_SRC")
 
         var imageView: ImageView = findViewById(R.id.fullimage)
-        Glide.with(this)
+        GlideApp.with(this)
             .load(link)
             .centerCrop()
+            .error(R.drawable.glide_err_foreground)
             .error(R.drawable.glide_err_foreground)
             .into(imageView)
     }
