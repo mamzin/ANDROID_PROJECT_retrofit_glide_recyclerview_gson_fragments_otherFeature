@@ -1,23 +1,23 @@
 package ru.mamzin.aleftask.model
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import ru.mamzin.aleftask.R
 import ru.mamzin.aleftask.utils.GlideApp
 
-class DataAdapter(
-    private var dataList: List<String>,
-    private val context: Context,
-    private val cellClickListener: CellClickListener
-) :
+class DataAdapter(private val cellClickListener: CellClickListener) :
     RecyclerView.Adapter<DataAdapter.ViewHolder>() {
 
+    var dataList = mutableListOf<String>()
+
+    fun setImageList(urls: List<String>) {
+        this.dataList = urls.toMutableList()
+        notifyDataSetChanged()
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(
@@ -26,18 +26,17 @@ class DataAdapter(
     }
 
     override fun getItemCount(): Int {
-        return dataList.count()
+        return dataList.size
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        GlideApp.with(context)
+        GlideApp.with(holder.itemView.context)
             .load(dataList[position])
             .diskCacheStrategy(DiskCacheStrategy.ALL)
             .override(270, 270)
             .centerCrop()
             .error(R.drawable.glide_err_foreground)
             .into(holder.imageView)
-
 
         val data = dataList[position]
         holder.itemView.setOnClickListener {

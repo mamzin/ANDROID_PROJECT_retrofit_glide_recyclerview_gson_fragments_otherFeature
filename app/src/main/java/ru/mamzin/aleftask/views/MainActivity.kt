@@ -5,27 +5,30 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import ru.mamzin.aleftask.utils.NetRepository
 import ru.mamzin.aleftask.R
 import ru.mamzin.aleftask.model.DataAdapter
 import ru.mamzin.aleftask.net.RetrofitService
+import ru.mamzin.aleftask.utils.NetRepository
+import ru.mamzin.aleftask.viewmodel.MainViewModel
+import ru.mamzin.aleftask.viewmodel.MyViewModelFactory
 import java.lang.Math.sqrt
 
 class MainActivity : AppCompatActivity(), DataAdapter.CellClickListener {
 
-    lateinit var dataList: List<String>
     var recyclerView: RecyclerView? = null
     var glManager: GridLayoutManager? = null
-    var adapter: DataAdapter? = null
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    private val repository: NetRepository = NetRepository(RetrofitService.getInstance())
     var spanCount = 2
+
+    lateinit var viewModel: MainViewModel
+    private val adapter = DataAdapter(this)
+
+    private val retrofitService = RetrofitService.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,11 +40,17 @@ class MainActivity : AppCompatActivity(), DataAdapter.CellClickListener {
             2
         }
 
+        viewModel = ViewModelProvider(
+            this,
+            MyViewModelFactory(NetRepository(retrofitService))
+        )[MainViewModel::class.java]
+
         recyclerView = findViewById(R.id.recycler_view)
         glManager = GridLayoutManager(this, spanCount)
         recyclerView!!.layoutManager = glManager
-        getData()
+        recyclerView?.adapter = adapter
 
+        getData()
 
         swipeRefreshLayout = findViewById(R.id.swipetorefresh)
         swipeRefreshLayout.setOnRefreshListener {
@@ -51,19 +60,15 @@ class MainActivity : AppCompatActivity(), DataAdapter.CellClickListener {
     }
 
     private fun getData() {
-        val call: Call<List<String>> = repository.getAllImages()
-        call.enqueue(object : Callback<List<String>> {
-            override fun onResponse(call: Call<List<String>>?, response: Response<List<String>>?) {
-                dataList = response?.body()!!
-                adapter = DataAdapter(dataList, this@MainActivity, this@MainActivity)
-                recyclerView!!.adapter = adapter
-                recyclerView?.adapter?.notifyDataSetChanged()
-            }
-
-            override fun onFailure(call: Call<List<String>>, t: Throwable) {
-                Toast.makeText(this@MainActivity, t.localizedMessage, Toast.LENGTH_LONG).show()
-            }
+        viewModel.dataList.observe(this, Observer {
+            adapter.setImageList(it)
         })
+
+        viewModel.errorMessage.observe(this, Observer {
+            Toast.makeText(this, it, Toast.LENGTH_LONG).show()
+        })
+
+        viewModel.getAllImages()
     }
 
     override fun onCellClickListener(datalink: String) {

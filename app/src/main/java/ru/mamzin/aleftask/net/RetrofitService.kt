@@ -15,6 +15,7 @@ interface RetrofitService {
 
     companion object {
         private var retrofitService: RetrofitService? = null
+
         fun getInstance(): RetrofitService {
 
             val gson = GsonBuilder().setLenient().create()

@@ -41,7 +41,8 @@ class MyAppGlideModule : AppGlideModule() {
         get() = object : X509TrustManager {
             override fun checkClientTrusted(
                 chain: Array<out java.security.cert.X509Certificate>?,
-                authType: String?) {
+                authType: String?
+            ) {
             }
 
             override fun checkServerTrusted(
